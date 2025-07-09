@@ -1,0 +1,187 @@
+<div class="mt-5">
+    <!-- confirmation modal -->
+    <ng-template #confirmModal let-modal>
+      <div class="modal-header">
+        <h4>Are you sure?</h4>
+        <button
+          type="button"
+          class="btn-close"
+          [disabled]="loading"
+          aria-label="Close"
+          (click)="modal.dismiss(''); resetForm();"
+        ></button>
+      </div>
+        <div class="modal-body">
+            <strong>
+                Are you sure you want to delete
+                <span class="text-primary">
+                    {{ pt.firstName }} {{ pt.lastName}}'s {{ selectedVisit.visitType }} visit on {{ selectedVisit.visitDate | date: 'longDate' }}
+                </span>?
+            </strong>
+        </div>
+        <div class="modal-footer">
+            <button
+              type="button"
+              [disabled]="loading"
+              class="btn btn-outline-secondary btn-sm"
+              (click)="modal.dismiss(''); resetForm();"
+            >Cancel</button>
+            <button
+              type="button"
+              [disabled]="loading"
+              class="btn btn-danger btn-sm d-flex gap-2 align-items-center"
+              (click)="visitDelete(selectedVisit._id)"
+            >
+                @if(loading){
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span role="status">Deleting...</span>
+                } @else {
+                Yes
+                }
+            </button>
+        </div>
+    </ng-template>
+
+    <!-- new visit modal -->
+    <ng-template #visitModal let-modal>
+        <form [formGroup]="visitForm" (ngSubmit)="onSubmit()">
+            <div class="modal-header">
+                <h4>Visit</h4>
+                <button type="button" class="btn-close" [disabled]="loading" aria-label="Close"
+                    (click)="modal.dismiss(''); resetForm();"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column gap-2">
+                    <div>
+                        <label for="visitType">Type <small class="text-danger">*</small></label>
+                        <select class="form-select" id="visitType" formControlName="visitType"
+                            [class.is-invalid]="visitForm.get('visitType')?.invalid && (visitForm.get('visitType')?.dirty || visitForm.get('visitType')?.touched)">
+
+                            <option value="" disabled selected>Select an option</option>
+                            @for(visitType of visitTypes; track visitType.label;){
+                            <option [value]="visitType.value">
+                                {{ visitType.label }}
+                            </option>
+                            }
+                        </select>
+                        <div class="invalid-feedback" *ngIf="visitForm.get('visitType')?.hasError('required')">
+                            <small>Please fill out this field.</small>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="date">Date <small class="text-danger">*</small></label>
+                        <input id="date" [readonly]="loading" class="form-control is-invalid" type="date"
+                            formControlName="visitDate"
+                            [class.is-invalid]="visitForm.get('visitDate')?.invalid && (visitForm.get('visitDate')?.dirty || visitForm.get('visitDate')?.touched)" />
+
+                        <div class="invalid-feedback" *ngIf="visitForm.get('visitDate')?.hasError('required')">
+                            <small>Please fill out this field.</small>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="notes">Notes</label>
+                        <textarea [readonly]="loading" name="notes" id="notes" class="form-control"
+                            formControlName="notes">
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="loading" class="btn btn-outline-secondary btn-sm"
+                    (click)="modal.dismiss(''); resetForm();">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm d-flex gap-2 align-items-center">
+                    @if(loading){
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status">Saving...</span>
+                    } @else {
+                    Save
+                    }
+                </button>
+            </div>
+        </form>
+    </ng-template>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Visits</h1>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm" (click)="open(visitModal);">New Visit</button>
+        </div>
+    </div>
+    <div class="card">
+
+        <div class="card-body">
+            <div class="d-flex flex-column flex-md-row gap-3 mb-3">
+                <div class="d-flex gap-2 align-items-center">
+                    <label for="table-complete-search" class="col-xs-3 col-sm-auto col-form-label">Search: </label>
+                    <div class="col-xs-3 col-sm-auto">
+                        <input id="table-complete-search" [formControl]="search" type="text"
+                            class="form-control form-control-sm" />
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(loading){
+                        <tr>
+                            <td colspan="4">
+                                <div class="d-flex align-items-center justify-content-center gap-2 text-primary">
+                                    <div class="spinner-border spinner-border-sm" aria-hidden="true"></div>
+                                    <b role="status">Loading...</b>
+                                </div>
+                            </td>
+                        </tr>
+
+                        } @else {
+
+                        @for (visit of visits; track visit._id) {
+                        <tr>
+                            <td>
+                                {{ visit.visitDate | date: 'longDate' }}
+                            </td>
+                            <td>
+                                {{ visit.visitType }}
+                            </td>
+                            <td>
+                                {{ visit.notes }}
+                            </td>
+                            <td class="overflow-hidden text-center">
+                                <div ngbDropdown container="body">
+                                    <button type="button" class="btn btn-outline-primary btn-sm no-caret"
+                                        ngbDropdownToggle>
+                                        <i class="bi bi-gear">
+                                        </i>
+                                    </button>
+                                    <div ngbDropdownMenu>
+                                        <button ngbDropdownItem (click)="viewVisit(visit); open(visitModal);">Edit</button>
+                                        <button ngbDropdownItem (click)="confirmDeletion(confirmModal, visit)">Delete</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        } @empty {
+                        <tr>
+                            <td colspan="4" class="text-center">No data found.</td>
+                        </tr>
+                        }
+
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <app-pagination [currentPage]="meta!.currentPage" [totalPages]="meta!.totalPages"
+                (pageChange)="onPageChange($event)">
+            </app-pagination>
+        </div>
+    </div>
+</div>
