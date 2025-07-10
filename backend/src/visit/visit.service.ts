@@ -5,7 +5,6 @@ import { Visit, VisitDocument } from './schemas/visit.schema';
 import { CreateVisitDto } from './dtos/create-visit.dto';
 import { UpdateVisitDto } from './dtos/update-visit.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { buildPageUrl } from 'src/common/helpers/pagination.helper';
 import { Patient, PatientDocument } from 'src/patient/schemas/patient.schema';
 
 @Injectable()
