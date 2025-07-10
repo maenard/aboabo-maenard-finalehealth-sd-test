@@ -5,7 +5,7 @@ import { NgbDatepickerModule, NgbModal, NgbModalRef, NgbDropdownModule, NgbToast
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PaginationComponent } from '../shared/components/pagination/pagination.component';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PaginationMeta } from '../shared/interfaces/pagination-meta.interface';
 import { Title } from '@angular/platform-browser';
 import { ToastService } from '../shared/services/toast/toast.service';
@@ -19,7 +19,8 @@ import { ToastService } from '../shared/services/toast/toast.service';
     ReactiveFormsModule,
     CommonModule,
     NgbDropdownModule,
-    PaginationComponent
+    PaginationComponent,
+    RouterModule
   ],
   templateUrl: './patients.component.html',
   styleUrl: './patients.component.css',

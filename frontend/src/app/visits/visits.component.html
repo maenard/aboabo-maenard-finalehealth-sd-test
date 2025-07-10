@@ -101,11 +101,24 @@
         </form>
     </ng-template>
 
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Visits</h1>
-        <div>
-            <button type="button" class="btn btn-primary btn-sm" (click)="open(visitModal);">New Visit</button>
-        </div>
+    <div class="d-flex justify-content-between flex-wrap align-items-center mb-4">
+      <div>
+        <h1 class="m-0">Visits</h1>
+         <p class="text-muted mb-2">
+          For patient:
+          <strong class="text-dark">{{ pt.lastName }}, {{ pt.firstName }}</strong>
+        </p>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+            <li class="breadcrumb-item"><a routerLink="/patients">Patients</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Visits</li>
+          </ol>
+        </nav>
+      </div>
+      <div>
+        <button type="button" class="btn btn-primary btn-sm" (click)="open(visitModal);">New Visit</button>
+      </div>
     </div>
     <div class="card">
 

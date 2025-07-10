@@ -1,5 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { PatientService } from '../patients/services/patient.service';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -20,7 +20,8 @@ import { ToastService } from '../shared/services/toast/toast.service';
     ReactiveFormsModule,
     CommonModule,
     FormsModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    RouterModule
   ],
   templateUrl: './visits.component.html',
   styleUrl: './visits.component.css',
