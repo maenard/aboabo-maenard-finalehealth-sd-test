@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PatientModule } from './patient/patient.module';
 import { VisitModule } from './visit/visit.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     PatientModule,
     VisitModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

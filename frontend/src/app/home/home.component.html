@@ -15,7 +15,7 @@
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
           <h5 class="card-title">Total Patients</h5>
-          <p class="display-6 fw-bold text-primary">234</p>
+          <p class="display-6 fw-bold text-primary">{{ totalPatients }}</p>
           <p class="card-text text-muted">Patients currently in the database.</p>
         </div>
       </div>
@@ -24,8 +24,8 @@
     <div class="col-md-4">
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
-          <h5 class="card-title">Today's Visits</h5>
-          <p class="display-6 fw-bold text-success">18</p>
+          <h5 class="card-title">Today's Visits Today</h5>
+          <p class="display-6 fw-bold text-success">{{ totalVisitsToday }}</p>
           <p class="card-text text-muted">Visits recorded today.</p>
         </div>
       </div>
@@ -35,7 +35,7 @@
       <div class="card shadow-sm h-100">
         <div class="card-body text-center">
           <h5 class="card-title">Total Visits</h5>
-          <p class="display-6 fw-bold text-warning">12</p>
+          <p class="display-6 fw-bold text-warning">{{ totalVisits }}</p>
           <p class="card-text text-muted">Visits currently in the database.</p>
         </div>
       </div>
