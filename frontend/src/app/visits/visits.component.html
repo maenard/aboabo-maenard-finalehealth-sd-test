@@ -1,4 +1,4 @@
-<div class="mt-5">
+<div class="py-5">
     <!-- confirmation modal -->
     <ng-template #confirmModal let-modal>
       <div class="modal-header">
@@ -101,17 +101,14 @@
         </form>
     </ng-template>
 
-    <div class="d-flex justify-content-between flex-wrap align-items-center mb-4">
-      <div>
+    <div class="d-flex flex-column flex-sm-row justify-content-start justify-content-sm-between flex-wrap align-items-sm-center mb-4">
+      <div class="mb-3 mb-sm-0">
         <h1 class="m-0">Visits</h1>
-         <p class="text-muted mb-2">
-          For patient:
-          <strong class="text-dark">{{ pt.lastName }}, {{ pt.firstName }}</strong>
-        </p>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0 small">
             <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
             <li class="breadcrumb-item"><a routerLink="/patients">Patients</a></li>
+            <li class="breadcrumb-item active" *ngIf="pt.lastName">{{ pt.lastName }}, {{ pt.firstName }}</li>
             <li class="breadcrumb-item active" aria-current="page">Visits</li>
           </ol>
         </nav>
@@ -192,8 +189,13 @@
                     </tbody>
                 </table>
             </div>
-            <app-pagination [currentPage]="meta!.currentPage" [totalPages]="meta!.totalPages"
-                (pageChange)="onPageChange($event)">
+            <app-pagination
+              [currentPage]="meta!.currentPage"
+              [totalPages]="meta!.totalPages"
+              [perPage]="meta!.perPage"
+              (pageChange)="onPageChange($event)"
+              (perPageChange)="onPerPageChange($event)"
+            >
             </app-pagination>
         </div>
     </div>

@@ -25,7 +25,7 @@ export class VisitService {
     const {
       search = '',
       page = 1,
-      limit = 10,
+      limit = 5,
       sortBy = 'visitDate',
       sortOrder = 'desc',
     } = query;

@@ -1,16 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pagination',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.css'
 })
-export class PaginationComponent {
+export class PaginationComponent implements OnInit {
   @Input() currentPage: number = 1;
   @Input() totalPages: number = 1;
+  @Input() perPage: number = 5;
   @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
+  @Output() perPageChange: EventEmitter<number> = new EventEmitter<number>();
+
+  perPageFormControl = new FormControl(this.perPage, { nonNullable: true });
+
+  ngOnInit(): void {
+    this.perPageFormControl.setValue(this.perPage, { emitEvent: false });
+
+    this.perPageFormControl.valueChanges.subscribe((newPerPage) => {
+      this.perPageChange.emit(newPerPage);
+    })
+
+  }
 
   get pages(): (number | string)[] {
     const pages: (number | string)[] = [];

@@ -23,7 +23,7 @@ export class PatientService {
     const {
       search = '',
       page = 1,
-      limit = 10,
+      limit = 5,
       sortBy = 'dateCreated',
       sortOrder = 'desc',
     } = query

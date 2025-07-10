@@ -52,7 +52,7 @@ export class VisitsComponent implements OnInit {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    perPage: 10,
+    perPage: 5,
     nextPage: null,
     prevPage: null
   }
@@ -82,7 +82,7 @@ export class VisitsComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       tap((keyword: string) => {
-        this.visitsGet(this.patientId, { search: keyword })
+        this.visitsGet(this.patientId, { search: keyword, limit: this.meta.perPage })
       }),
     ).subscribe()
 
@@ -205,7 +205,11 @@ export class VisitsComponent implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.visitsGet(this.patientId, { search: this.search.value, page })
+    this.visitsGet(this.patientId, { search: this.search.value, page, limit: this.meta.perPage })
+  }
+
+  onPerPageChange(limit: number) {
+    this.visitsGet(this.patientId, { search: this.search.value, limit })
   }
 
   resetForm() {

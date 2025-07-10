@@ -40,7 +40,7 @@ export class PatientsComponent implements OnInit {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    perPage: 10,
+    perPage: 5,
     nextPage: null,
     prevPage: null
   }
@@ -66,7 +66,7 @@ export class PatientsComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       tap((keyword: string) => {
-        this.patientGet({ search: keyword })
+        this.patientGet({ search: keyword, limit: this.meta.perPage })
       }),
     ).subscribe()
   }
@@ -95,7 +95,11 @@ export class PatientsComponent implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.patientGet({ search: this.search.value, page })
+    this.patientGet({ search: this.search.value, page, limit: this.meta.perPage })
+  }
+
+  onPerPageChange(limit: number) {
+    this.patientGet({ search: this.search.value, limit })
   }
 
   onSubmit() {
