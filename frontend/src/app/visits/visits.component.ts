@@ -10,6 +10,7 @@ import { NgbDropdownModule, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-boots
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { VisitService } from './services/visit.service';
+import { ToastService } from '../shared/services/toast/toast.service';
 
 @Component({
   selector: 'app-visits',
@@ -32,7 +33,8 @@ export class VisitsComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private visitService: VisitService,
     private modalService: NgbModal,
-    private titleService: Title
+    private titleService: Title,
+    private toastService: ToastService
   ) { }
 
   private modalRef!: NgbModalRef
@@ -132,6 +134,10 @@ export class VisitsComponent implements OnInit {
     this.patientService.creatVisitForPatient(this.patientId, payload).subscribe({
       next: () => {
         this.resetForm()
+        this.toastService.success('Visit created successfully!')
+      },
+      error: () => {
+        this.toastService.error('Oops! Something went wrong.')
       },
       complete: () => {
         this.modalRef.close()
@@ -144,6 +150,12 @@ export class VisitsComponent implements OnInit {
   visitDelete(id: string): void {
     this.loading = true
     this.visitService.delete(id).subscribe({
+      next: () => {
+        this.toastService.success('Patient deleted successfully!')
+      },
+      error: () => {
+        this.toastService.error('Oops! Something went wrong.')
+      },
       complete: () => {
         this.loading = false
         this.selectedVisit = {}
@@ -157,6 +169,12 @@ export class VisitsComponent implements OnInit {
   visitPut(): void {
     this.loading = true
     this.visitService.update(this.selectedVisit._id, this.visitForm.value).subscribe({
+      next: () => {
+        this.toastService.success('Patient updated successfully!')
+      },
+      error: () => {
+        this.toastService.error('Oops! Something went wrong.')
+      },
       complete: () => {
         this.selectedVisit = {}
         this.resetForm()

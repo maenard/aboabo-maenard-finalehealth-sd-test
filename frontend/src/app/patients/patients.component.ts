@@ -1,13 +1,14 @@
 import { Component, OnInit, inject, TemplateRef } from '@angular/core';
 import { DatePipe, CommonModule } from '@angular/common';
 import { PatientService } from './services/patient.service';
-import { NgbDatepickerModule, NgbModal, NgbModalRef, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModal, NgbModalRef, NgbDropdownModule, NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PaginationComponent } from '../shared/components/pagination/pagination.component';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { PaginationMeta } from '../shared/interfaces/pagination-meta.interface';
 import { Title } from '@angular/platform-browser';
+import { ToastService } from '../shared/services/toast/toast.service';
 
 
 @Component({
@@ -25,8 +26,7 @@ import { Title } from '@angular/platform-browser';
 })
 
 export class PatientsComponent implements OnInit {
-  constructor(private patientService: PatientService, private router: Router, private modalService: NgbModal, private titleService: Title) { }
-
+  constructor(private patientService: PatientService, private router: Router, private modalService: NgbModal, private titleService: Title, private toastService: ToastService) { }
 
 
   private modalRef!: NgbModalRef
@@ -112,13 +112,19 @@ export class PatientsComponent implements OnInit {
     if (this.patientForm.valid) {
       this.loading = true
       this.patientService.create(payload).subscribe({
+        next: () => {
+          this.toastService.success('Patient addedd successfully!')
+        },
+        error: () => {
+          this.toastService.error('Oops! Something went wrong.')
+        },
         complete: () => {
           this.patientForm.reset()
           this.modalRef.close()
           this.loading = false
         }
       })
-      this.patientGet()
+      this.patientGet({ search: this.search.value })
     }
 
   }
@@ -131,6 +137,12 @@ export class PatientsComponent implements OnInit {
   patientDelete(id: string) {
     this.loading = true
     this.patientService.delete(id).subscribe({
+      next: () => {
+        this.toastService.success('Patient deleted successfully!')
+      },
+      error: () => {
+        this.toastService.error('Oops! Something went wrong.')
+      },
       complete: () => {
         this.loading = false
         this.selectedPt = {}
@@ -156,6 +168,12 @@ export class PatientsComponent implements OnInit {
     if (this.patientForm.valid) {
       this.loading = true
       this.patientService.update(this.selectedPt._id, this.patientForm.value).subscribe({
+        next: () => {
+          this.toastService.success('Patient updated successfully!')
+        },
+        error: () => {
+          this.toastService.error('Oops! Something went wrong.')
+        },
         complete: () => {
           this.selectedPt = {}
           this.patientForm.reset()
@@ -165,7 +183,7 @@ export class PatientsComponent implements OnInit {
       })
     }
 
-    this.patientGet()
+    this.patientGet({ search: this.search.value })
   }
 
   resetForm() {
