@@ -35,7 +35,8 @@ export class VisitsComponent implements OnInit {
     private visitService: VisitService,
     private modalService: NgbModal,
     private titleService: Title,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) { }
 
   private modalRef!: NgbModalRef
@@ -159,6 +160,9 @@ export class VisitsComponent implements OnInit {
         this.titleService.setTitle(patientName + " | Visits")
         this.visits = res.data.visits
         this.meta = res.meta
+      },
+      error: (err) => {
+        this.router.navigate(['/patients'])
       },
       complete: () => {
         this.loading = false
