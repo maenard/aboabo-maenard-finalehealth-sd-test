@@ -26,7 +26,7 @@ export class VisitService {
       search = '',
       page = 1,
       limit = 10,
-      sortBy = 'dateCreated',
+      sortBy = 'visitDate',
       sortOrder = 'desc',
     } = query;
     const skip = (Number(page) - 1) * Number(limit);
