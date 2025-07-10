@@ -5,15 +5,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { buildPageUrl } from 'src/common/helpers/pagination.helper';
 
 @Injectable()
 export class PatientService {
   constructor(
     @InjectModel(Patient.name) private patientModel: Model<PatientDocument>
   ) { }
-
-  private basePath: string = '/patients'
 
   async create(dto: CreatePatientDto): Promise<Patient> {
     return this.patientModel.create(dto)
@@ -91,13 +88,8 @@ export class PatientService {
         totalPages,
         totalItems,
         perPage: Number(limit),
-        nextPage: Number(page) < totalPages
-          ? buildPageUrl(this.basePath, { search, limit, sortBy, sortOrder }, Number(page) + 1)
-          : null,
-        prevPage: Number(page) > 1
-          ? buildPageUrl(this.basePath, { search, limit, sortBy, sortOrder }, Number(page) - 1)
-          : null,
-      }
+      },
+      query
     }
   }
 

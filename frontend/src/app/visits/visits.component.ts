@@ -4,7 +4,7 @@ import { OnInit } from '@angular/core';
 import { PatientService } from '../patients/services/patient.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { PaginationComponent } from '../shared/components/pagination/pagination.component';
-import { PaginationMeta } from '../shared/interfaces/pagination-meta.interface';
+import { PaginationMeta, PaginationQuery } from '../shared/interfaces/pagination-meta.interface';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
@@ -41,6 +41,8 @@ export class VisitsComponent implements OnInit {
   private modalRef!: NgbModalRef
 
   search = new FormControl('', { nonNullable: true })
+  sortBy = new FormControl('dateCreated', { nonNullable: true })
+  order = new FormControl('desc', { nonNullable: true })
   visitForm!: FormGroup
 
   selectedVisit: any = {}
@@ -57,6 +59,14 @@ export class VisitsComponent implements OnInit {
     prevPage: null
   }
 
+  query: PaginationQuery = {
+    search: '',
+    page: 1,
+    limit: 5,
+    sortBy: 'dateCreated',
+    sortOrder: 'desc'
+  }
+
   visitTypes = [
     { label: 'Home', value: 'Home' },
     { label: 'Telehealth', value: 'Telehealth' },
@@ -64,11 +74,8 @@ export class VisitsComponent implements OnInit {
   ]
 
   ngOnInit(): void {
-    this.visitForm = new FormGroup({
-      visitType: new FormControl('', Validators.required),
-      notes: new FormControl(''),
-      visitDate: new FormControl('', Validators.required)
-    })
+
+    this.initForm()
 
     this.activeRoute.params.subscribe((value) => {
       const id = value['id']
@@ -82,10 +89,26 @@ export class VisitsComponent implements OnInit {
       debounceTime(500),
       distinctUntilChanged(),
       tap((keyword: string) => {
-        this.visitsGet(this.patientId, { search: keyword, limit: this.meta.perPage })
+        this.visitsGet(this.patientId, { search: keyword, page: 1 })
       }),
     ).subscribe()
 
+    this.sortBy.valueChanges.subscribe((sortBy) => {
+      this.visitsGet(this.patientId, { sortBy, page: 1 })
+    })
+
+    this.order.valueChanges.subscribe((sortOrder) => {
+      this.visitsGet(this.patientId, { sortOrder, page: 1 })
+    })
+
+  }
+
+  initForm() {
+    this.visitForm = new FormGroup({
+      visitType: new FormControl('', Validators.required),
+      notes: new FormControl(''),
+      visitDate: new FormControl('', Validators.required)
+    })
   }
 
   open(content: TemplateRef<any>) {
@@ -115,8 +138,20 @@ export class VisitsComponent implements OnInit {
     }
   }
 
-  visitsGet(id: string, query: any = {}) {
+  visitsGet(id: string, overrides: Partial<PaginationQuery> = {}) {
     this.loading = true
+
+    const query: PaginationQuery = {
+      ...this.query,
+      ...overrides,
+      search: overrides.search ?? this.search.value,
+      sortBy: overrides.sortBy ?? this.sortBy.value,
+      sortOrder: overrides.sortOrder ?? this.order.value,
+      limit: overrides.limit ?? this.meta.perPage,
+      page: overrides.page ?? 1,
+
+    }
+
     this.patientService.getVisitsPerPatient(id, query).subscribe({
       next: (res: any) => {
         this.pt = res.data.patient
@@ -205,11 +240,11 @@ export class VisitsComponent implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.visitsGet(this.patientId, { search: this.search.value, page, limit: this.meta.perPage })
+    this.visitsGet(this.patientId, { page })
   }
 
   onPerPageChange(limit: number) {
-    this.visitsGet(this.patientId, { search: this.search.value, limit })
+    this.visitsGet(this.patientId, { limit, page: 1 })
   }
 
   resetForm() {

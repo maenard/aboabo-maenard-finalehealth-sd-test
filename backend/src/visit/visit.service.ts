@@ -21,14 +21,14 @@ export class VisitService {
 
   async findByPatientid(patientId: string, query: PaginationQueryDto = {}): Promise<any> {
 
-    const baseUrl = `/patients/${patientId}/visits`
     const {
       search = '',
       page = 1,
       limit = 5,
-      sortBy = 'visitDate',
+      sortBy = 'dateCreated',
       sortOrder = 'desc',
     } = query;
+
     const skip = (Number(page) - 1) * Number(limit);
 
     const patient = await this.patientModel.findById(patientId).lean();
@@ -80,13 +80,8 @@ export class VisitService {
         totalPages,
         totalItems,
         perPage: Number(limit),
-        nextPage: Number(page) < totalPages
-          ? buildPageUrl(baseUrl, { search, limit, sortBy, sortOrder }, Number(page) + 1)
-          : null,
-        prevPage: Number(page) > 1
-          ? buildPageUrl(baseUrl, { search, limit, sortBy, sortOrder }, Number(page) - 1)
-          : null,
-      }
+      },
+      query
     };
   }
 

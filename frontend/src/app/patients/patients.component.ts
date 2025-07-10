@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { PaginationComponent } from '../shared/components/pagination/pagination.component';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { Router, RouterModule } from '@angular/router';
-import { PaginationMeta } from '../shared/interfaces/pagination-meta.interface';
+import { PaginationMeta, PaginationQuery } from '../shared/interfaces/pagination-meta.interface';
 import { Title } from '@angular/platform-browser';
 import { ToastService } from '../shared/services/toast/toast.service';
 
@@ -34,6 +34,8 @@ export class PatientsComponent implements OnInit {
 
   selectedPt: any = {}
   search = new FormControl('', { nonNullable: true });
+  sortBy = new FormControl('dateCreated', { nonNullable: true })
+  order = new FormControl('desc', { nonNullable: true })
 
   patients: any = []
   meta: PaginationMeta = {
@@ -45,12 +47,42 @@ export class PatientsComponent implements OnInit {
     prevPage: null
   }
 
+  query: PaginationQuery = {
+    search: '',
+    page: 1,
+    limit: 5,
+    sortBy: 'dateCreated',
+    sortOrder: 'desc'
+  }
+
   patientForm!: FormGroup
   loading: boolean = false
 
   ngOnInit(): void {
     this.titleService.setTitle('Strongwill | Patients')
 
+    this.initForm()
+
+    this.patientGet()
+
+    this.search.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      tap((keyword: string) => {
+        this.patientGet({ search: keyword, page: 1 })
+      }),
+    ).subscribe()
+
+    this.sortBy.valueChanges.subscribe((sortBy) => {
+      this.patientGet({ sortBy, page: 1 })
+    })
+
+    this.order.valueChanges.subscribe((sortOrder) => {
+      this.patientGet({ sortOrder, page: 1 })
+    })
+  }
+
+  initForm() {
     this.patientForm = new FormGroup({
       firstName: new FormControl('', Validators.required),
       lastName: new FormControl('', Validators.required),
@@ -59,16 +91,6 @@ export class PatientsComponent implements OnInit {
       phoneNumber: new FormControl('', Validators.required),
       address: new FormControl('', Validators.required)
     })
-
-    this.patientGet()
-
-    this.search.valueChanges.pipe(
-      debounceTime(500),
-      distinctUntilChanged(),
-      tap((keyword: string) => {
-        this.patientGet({ search: keyword, limit: this.meta.perPage })
-      }),
-    ).subscribe()
   }
 
   open(content: TemplateRef<any>) {
@@ -81,8 +103,20 @@ export class PatientsComponent implements OnInit {
     )
   }
 
-  patientGet(query: any = {}) {
+  patientGet(overrides: Partial<PaginationQuery> = {}) {
     this.loading = true
+
+    const query: PaginationQuery = {
+      ...this.query,
+      ...overrides,
+      search: overrides.search ?? this.search.value,
+      sortBy: overrides.sortBy ?? this.sortBy.value,
+      sortOrder: overrides.sortOrder ?? this.order.value,
+      limit: overrides.limit ?? this.meta.perPage,
+      page: overrides.page ?? 1,
+    }
+
+    this.query = query
     this.patientService.findAll(query).subscribe({
       next: (res: any) => {
         this.patients = res.data
@@ -95,11 +129,11 @@ export class PatientsComponent implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.patientGet({ search: this.search.value, page, limit: this.meta.perPage })
+    this.patientGet({ page })
   }
 
   onPerPageChange(limit: number) {
-    this.patientGet({ search: this.search.value, limit })
+    this.patientGet({ limit, page: 1 })
   }
 
   onSubmit() {

@@ -151,6 +151,25 @@
                             class="form-control form-control-sm" />
                     </div>
                 </div>
+
+                <div class="d-flex gap-2 align-items-center">
+                  <label for="sort-by" class="form-label mb-0">Sort by:</label>
+                  <select id="sort-by" [formControl]="sortBy" class="form-select form-select-sm w-auto">
+                    <option value="firstName">First Name</option>
+                    <option value="lastName">Last Name</option>
+                    <option value="dob">DOB</option>
+                    <option value="email">Email</option>
+                    <option value="dateCreated">Date Created</option>
+                  </select>
+                </div>
+
+                <div class="d-flex gap-2 align-items-center">
+                  <label for="order" class="form-label mb-0">Order:</label>
+                  <select id="order" [formControl]="order" class="form-select form-select-sm w-auto">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                  </select>
+                </div>
             </div>
 
             <div class="table-responsive mb-3">

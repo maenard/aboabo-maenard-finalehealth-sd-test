@@ -128,6 +128,23 @@
                             class="form-control form-control-sm" />
                     </div>
                 </div>
+
+                <div class="d-flex gap-2 align-items-center">
+                  <label for="sort-by" class="form-label mb-0">Sort by:</label>
+                  <select id="sort-by" [formControl]="sortBy" class="form-select form-select-sm w-auto">
+                    <option value="visitDate">Date</option>
+                    <option value="visitType">Type</option>
+                    <option value="dateCreated">Date Created</option>
+                  </select>
+                </div>
+
+                <div class="d-flex gap-2 align-items-center">
+                  <label for="order" class="form-label mb-0">Order:</label>
+                  <select id="order" [formControl]="order" class="form-select form-select-sm w-auto">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                  </select>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover table-striped table-sm">
