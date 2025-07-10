@@ -106,10 +106,12 @@ export class VisitsComponent implements OnInit {
 
   onSubmit() {
     this.visitForm.markAllAsTouched()
-    if (this.visitForm.valid && Object.keys(this.selectedVisit).length > 0) {
-      this.visitPut()
-    } else {
-      this.visitPost(this.visitForm.value)
+    if (this.visitForm.valid) {
+      if (this.visitForm.valid && Object.keys(this.selectedVisit).length > 0) {
+        this.visitPut()
+      } else {
+        this.visitPost(this.visitForm.value)
+      }
     }
   }
 
