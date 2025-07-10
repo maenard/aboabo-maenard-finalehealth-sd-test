@@ -29,8 +29,8 @@ Make sure you have the following installed globally:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/patient-visit-app.git
-cd patient-visit-app
+git clone https://github.com/your-username/aboabo-maenard-finalehealth-sd-test.git
+cd aboabo-maenard-finalehealth-sd-test
 ```
 
 ### 2. Install Dependencies
